@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-postgres}
+      POSTGRES_USER: ${DATABASE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: production
+      DATABASE_NAME: ${DATABASE_NAME:-postgres}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      DATABASE_PORT: 5432
+      DATABASE_HOST: db
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
